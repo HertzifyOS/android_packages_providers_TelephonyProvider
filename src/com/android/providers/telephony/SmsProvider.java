@@ -1408,6 +1408,13 @@ public class SmsProvider extends ContentProvider {
     /** Internal implementation of the database operation. */
     public int deleteInternal(Uri url, String where, String[] whereArgs) {
         final UserHandle callerUserHandle = Binder.getCallingUserHandle();
+        try {
+            SqlQueryChecker.checkSelection(where);
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG, "Delete rejected: " + e.getMessage());
+            return 0;
+        }
+
         final int callerUid = Binder.getCallingUid();
         final long token = Binder.clearCallingIdentity();
 
@@ -1688,6 +1695,13 @@ public class SmsProvider extends ContentProvider {
 
     /** Internal implementation of the database operation. */
     public int updateInternal(Uri url, ContentValues values, String where, String[] whereArgs) {
+        try {
+            SqlQueryChecker.checkSelection(where);
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG, "Update rejected: " + e.getMessage());
+            return 0;
+        }
+
         final int callerUid = Binder.getCallingUid();
         final UserHandle callerUserHandle = Binder.getCallingUserHandle();
         final String callerPkg = getCallingPackage();

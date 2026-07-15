@@ -1766,6 +1766,13 @@ public class MmsSmsProvider extends ContentProvider {
 
     /** Internal implementation of the database operation. */
     public int deleteInternal(Uri uri, String selection, String[] selectionArgs) {
+        try {
+            SqlQueryChecker.checkSelection(selection);
+        } catch (IllegalArgumentException e) {
+            Log.w(LOG_TAG, "Delete rejected: " + e.getMessage());
+            return 0;
+        }
+
         final UserHandle callerUserHandle = Binder.getCallingUserHandle();
         String selectionBySubIds;
         final long token = Binder.clearCallingIdentity();
@@ -1966,6 +1973,13 @@ public class MmsSmsProvider extends ContentProvider {
     /** Internal implementation of the database operation. */
     public int updateInternal(Uri uri, ContentValues values,
             String selection, String[] selectionArgs) {
+        try {
+            SqlQueryChecker.checkSelection(selection);
+        } catch (IllegalArgumentException e) {
+            Log.w(LOG_TAG, "Update rejected: " + e.getMessage());
+            return 0;
+        }
+
         final int callerUid = Binder.getCallingUid();
         final UserHandle callerUserHandle = Binder.getCallingUserHandle();
         final String callerPkg = getCallingPackage();
